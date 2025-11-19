@@ -24,7 +24,17 @@ services:
     tags: [ 'controller.service_arguments' ]
   oidc_authenticator:
     class: con4gis\OAuthBundle\Security\OidcAuthenticator
-    arguments: ["@contao.framework", "@knpu.oauth2.registry"]
     autowire: true
+    arguments:
+      $userProvider: "@knpu.oauth2.user_provider"
+      $chainUserProvider: "@security.user_providers"
+
   con4gis\OAuthBundle\Controller\KeycloakController:
     arguments: ["@knpu.oauth2.registry"]
+
+
+  con4gis\OAuthBundle\Controller\OAuthLoginModuleController:
+    tags:
+      - name: contao.frontend_module
+        category: miscellaneous
+        template: 'oauth_login_template'

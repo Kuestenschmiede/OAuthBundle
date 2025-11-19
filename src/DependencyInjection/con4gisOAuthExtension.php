@@ -54,7 +54,7 @@ class con4gisOAuthExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return "con4gis_oauth";
     }

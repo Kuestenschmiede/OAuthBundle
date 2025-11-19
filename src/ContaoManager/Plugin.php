@@ -83,11 +83,6 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface, Routing
         foreach ($extensionConfigs as &$extensionConfig) {
             if (isset($extensionConfig['firewalls'])) {
 
-                //Add custom encoder for knpu oauth2
-                $extensionConfig['encoders']['KnpU\OAuth2ClientBundle\Security\User\OAuthUser'] = [
-                    'algorithm' => 'auto'
-                ];
-
                 // Add own security authentication provider
                 $extensionConfig['providers']['oauth'] = [
                     'id' => 'knpu.oauth2.user_provider'
@@ -101,10 +96,8 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface, Routing
 
                 $offset = (int) array_search('frontend', array_keys($extensionConfig['firewalls']));
 
-                $extensionConfig['firewalls']['contao_frontend']['guard'] = [
-                    'authenticators' => [
-                        'oidc_authenticator'
-                    ]
+                $extensionConfig['firewalls']['contao_frontend']['custom_authenticators'] = [
+                    'oidc_authenticator'
                 ];
                 unset($extensionConfig['firewalls']['contao_frontend']['request_matcher']);
                 if ($container->getParameter('con4gis.oauth.oidc.secured') == 'true') {
@@ -113,7 +106,10 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface, Routing
                     $extensionConfig['firewalls']['contao_frontend']['entry_point'] = 'oidc_authenticator';
                     $extensionConfig['firewalls']['contao_frontend']['pattern'] = '^/(?!oidc/login|oidc/login|contao)';
                     $extensionConfig['firewalls']['contao_frontend']['provider'] = 'frontend_chain';
-                    $extensionConfig['firewalls']['contao_frontend']['anonymous'] = false;
+//                    $extensionConfig['firewalls']['contao_frontend']['anonymous'] = false;
+                } else {
+                    // default to Contao authenticator if oidc is not set up
+                    $extensionConfig['firewalls']['contao_frontend']['entry_point'] = "contao_login";
                 }
 
                 break;

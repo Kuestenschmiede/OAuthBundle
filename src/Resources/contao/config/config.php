@@ -20,11 +20,6 @@
  * @link      https://www.kuestenschmiede.de
  */
 
-array_insert($GLOBALS['FE_MOD']['con4gis_oauth'], 1, array
-(
-    'oauth_login' => \con4gis\OAuthBundle\Resources\contao\modules\OAuthLoginModule::class,
-));
-
 if (is_array($GLOBALS['BE_MOD']) && isset($GLOBALS['BE_MOD']['con4gis']) && $GLOBALS['BE_MOD']['con4gis']) {
     $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], ['con4gis_oauth'=>['brick' => 'oauth']]);
-};
+}

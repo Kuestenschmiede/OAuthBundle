@@ -57,6 +57,10 @@ class OAuthCallback
             $memberMappings = unserialize($oauthRegModule['c4g_oauth_member_mapping']);
             foreach ($memberMappings as $memberMapping) {
                 $contaoField = $memberMapping['contaoField'];
+                if ($contaoField === "0") {
+                    continue;
+                }
+
                 if (!array_key_exists('eval', $GLOBALS['TL_DCA'][$dc->table]['fields'][$contaoField])) {
                     $GLOBALS['TL_DCA'][$dc->table]['fields'][$contaoField]['eval'] = [];
                 }

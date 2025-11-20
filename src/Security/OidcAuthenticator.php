@@ -20,6 +20,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use KnpU\OAuth2ClientBundle\Security\User\OAuthUser;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,6 +47,7 @@ class OidcAuthenticator extends OAuth2Authenticator implements AuthenticationEnt
     private $securedFrontend;
     private $userProvider;
     private $chainUserProvider;
+    private $security;
 
     public function __construct(
         ContaoFramework $contaoFramework,
@@ -52,7 +55,8 @@ class OidcAuthenticator extends OAuth2Authenticator implements AuthenticationEnt
         RouterInterface $router,
         EntityManagerInterface $em,
         $userProvider,
-        ChainUserProvider $chainUserProvider
+        ChainUserProvider $chainUserProvider,
+        Security $security
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->em = $em;
@@ -60,18 +64,13 @@ class OidcAuthenticator extends OAuth2Authenticator implements AuthenticationEnt
         $this->framework = $contaoFramework;
         $this->userProvider = $userProvider;
         $this->chainUserProvider = $chainUserProvider;
+        $this->security = $security;
     }
 
     public function supports(Request $request): bool
     {
         // continue ONLY if the current ROUTE matches the check ROUTE
         return $request->attributes->get('_route') === 'connect_oidc_check';
-    }
-
-    public function getCredentials(Request $request)
-    {
-        // this method is only called if supports() returns true
-        return $this->fetchAccessToken($this->getOidcClient());
     }
 
     public function authenticate(Request $request): Passport
@@ -83,30 +82,22 @@ class OidcAuthenticator extends OAuth2Authenticator implements AuthenticationEnt
             new UserBadge($accessToken->getToken(), function() use ($accessToken, $client) {
 
                 $this->framework->initialize();
-                $systemAdapter = $this->framework->getAdapter(System::class);
 
-                $securedFrontend = $systemAdapter->getContainer()->getParameter('con4gis.oauth.oidc.secured');
+                $oidcUser = $this->getOidcClient()->fetchUserFromToken($accessToken);
+                $oidcUser = $oidcUser->toArray();
 
-                if ($securedFrontend == 'true') {
-                    $user = $this->userProvider->loadUserByIdentifier($this->getOidcClient()->fetchUserFromToken($accessToken)->getId());
-                } else {
+                $userArray = [
+                    'username' => $oidcUser['preferred_username']
+                ];
 
-                    $oidcUser = $this->getOidcClient()->fetchUserFromToken($accessToken);
-                    $oidcUser = $oidcUser->toArray();
-
-                    $userArray = [
-                        'username' => $oidcUser['preferred_username']
-                    ];
-
-                    foreach ($oidcUser as $oidcUserAttrKey => $oidcUserAttrValue) {
-                        $userArray[$oidcUserAttrKey] = $oidcUserAttrValue;
-                    }
-
-                    $loginUser = new LoginUserHandler();
-                    $feUser = $loginUser->addUser($userArray, '/oidc/login');
-
-                    $user = $this->chainUserProvider->loadUserByIdentifier($feUser->username);
+                foreach ($oidcUser as $oidcUserAttrKey => $oidcUserAttrValue) {
+                    $userArray[$oidcUserAttrKey] = $oidcUserAttrValue;
                 }
+
+                $loginUser = new LoginUserHandler();
+                $feUser = $loginUser->addUser($userArray, '/oidc/login');
+
+                $user = $this->chainUserProvider->loadUserByIdentifier($feUser->username);
 
                 return $user;
 

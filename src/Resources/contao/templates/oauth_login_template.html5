@@ -6,4 +6,12 @@
     </form>
 </div>
 <?php } ?>
+
+<?php if ($this->loginStatus) { ?>
+<div class='login login-oauth'>
+    <form action="/oidc/logout">
+        <button id='logout-oauth-btn' class='btn btn-oauth btn-login-oauth' type="submit">Logout</button>
+    </form>
+</div>
+<?php } ?>
 <!-- indexer::continue -->

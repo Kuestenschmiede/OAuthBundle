@@ -30,7 +30,7 @@ services:
       $chainUserProvider: "@security.user_providers"
 
   con4gis\OAuthBundle\Controller\KeycloakController:
-    arguments: ["@knpu.oauth2.registry"]
+    arguments: ["@knpu.oauth2.registry", "@knpu.oauth2.provider.oidc"]
 
 
   con4gis\OAuthBundle\Controller\OAuthLoginModuleController:
@@ -38,3 +38,10 @@ services:
       - name: contao.frontend_module
         category: miscellaneous
         template: 'oauth_login_template'
+
+  con4gis\OAuthBundle\EventListener\OAuthRequestListener:
+    autowire: true
+    autoconfigure: true
+    tags: [ 'kernel.event_listener' ]
+    arguments:
+      $securedFrontend: '%con4gis.oauth.oidc.secured%'

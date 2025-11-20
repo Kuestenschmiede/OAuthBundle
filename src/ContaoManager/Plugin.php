@@ -100,17 +100,9 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface, Routing
                     'oidc_authenticator'
                 ];
                 unset($extensionConfig['firewalls']['contao_frontend']['request_matcher']);
-                if ($container->getParameter('con4gis.oauth.oidc.secured') == 'true') {
-                    $extensionConfig['access_control'][3]['roles'] = "ROLE_OAUTH_USER";
 
-                    $extensionConfig['firewalls']['contao_frontend']['entry_point'] = 'oidc_authenticator';
-                    $extensionConfig['firewalls']['contao_frontend']['pattern'] = '^/(?!oidc/login|oidc/login|contao)';
-                    $extensionConfig['firewalls']['contao_frontend']['provider'] = 'frontend_chain';
-//                    $extensionConfig['firewalls']['contao_frontend']['anonymous'] = false;
-                } else {
-                    // default to Contao authenticator if oidc is not set up
-                    $extensionConfig['firewalls']['contao_frontend']['entry_point'] = "contao_login";
-                }
+                $extensionConfig['firewalls']['contao_frontend']['entry_point'] = "contao_login";
+
 
                 break;
             }

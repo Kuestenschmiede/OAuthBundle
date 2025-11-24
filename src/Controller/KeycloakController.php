@@ -59,12 +59,9 @@ class KeycloakController extends AbstractController
      */
     public function logoutAction(Request $request)
     {
-        // TODO fix redirect after logout
         $baseAuthUrl = $this->provider->getBaseAuthorizationUrl();
         $logoutUrl = str_replace("auth", "logout", $baseAuthUrl);
-        $logoutUrl .= "?redirect_uri=" . urlencode($request->getSchemeAndHttpHost());
 
-        // TODO would be better if we could use some kind of callback to do this
         $this->security->logout(false);
 
         return new RedirectResponse($logoutUrl);

@@ -49,13 +49,17 @@ class LoginUserHandler
         if ($feUserGroups && $feUserGroups != 'a:0:{}') {
             $feUserGroups = unserialize($feUserGroups);
             $loginGroups = unserialize($loginModule['c4g_oauth_reg_groups']);
-            $missingGroups = array_diff($loginGroups, $feUserGroups);
-            if ($missingGroups) {
-                foreach ($missingGroups as $missingGroup) {
-                    $feUserGroups[] = $missingGroup;
+
+            if (is_array($loginGroups)) {
+                $missingGroups = array_diff($loginGroups, $feUserGroups);
+                if ($missingGroups) {
+                    foreach ($missingGroups as $missingGroup) {
+                        $feUserGroups[] = $missingGroup;
+                    }
+                    $feUser->groups = serialize($feUserGroups);
                 }
-                $feUser->groups = serialize($feUserGroups);
             }
+
         } else {
             $feUser->groups = $loginModule['c4g_oauth_reg_groups'];
         }
@@ -70,7 +74,13 @@ class LoginUserHandler
                 }
                 $contaoField = $memberMapping['contaoField'];
                 $oauthField = $memberMapping['oauthField'];
-                $feUser->$contaoField = $userArray[$oauthField];
+
+                if (
+                    array_key_exists($oauthField, $userArray)
+                    && $userArray[$oauthField]
+                ) {
+                    $feUser->$contaoField = $userArray[$oauthField];
+                }
             }
         }
 

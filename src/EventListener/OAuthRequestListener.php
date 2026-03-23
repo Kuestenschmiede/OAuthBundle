@@ -33,6 +33,12 @@ class OAuthRequestListener
         $this->framework->initialize();
         $user = FrontendUser::getInstance();
 
+        $requestHeaders = $request->headers->all();
+
+        if (in_array("contao/crawler", $requestHeaders['user-agent'])) {
+            return;
+        }
+        
         if ($this->securedFrontend !== "false" && !str_contains($request->getUri(), "/oidc/login")) {
             if ($user === null || !$user->c4gOAuthMember) {
                 // no OAuth user given

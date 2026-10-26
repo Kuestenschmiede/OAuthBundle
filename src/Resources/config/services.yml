@@ -6,6 +6,7 @@ parameters:
   con4gis.oauth.oidc.realm: "###"
   con4gis.oauth.oidc.secured_frontend: "false"
   con4gis.oauth.oidc.secured: "false"
+  con4gis.oauth.oidc.crawler_secret: "secret"
 
 services:
   _defaults:
@@ -42,6 +43,15 @@ services:
   con4gis\OAuthBundle\EventListener\OAuthRequestListener:
     autowire: true
     autoconfigure: true
-    tags: [ 'kernel.event_listener' ]
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -1001 }
     arguments:
       $securedFrontend: '%con4gis.oauth.oidc.secured%'
+
+  con4gis\OAuthBundle\EventListener\CrawlerSecretValidationListener:
+    autowire: true
+    autoconfigure: true
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -1000 }
+    arguments:
+      $crawlerSecret: '%con4gis.oauth.oidc.crawler_secret%'

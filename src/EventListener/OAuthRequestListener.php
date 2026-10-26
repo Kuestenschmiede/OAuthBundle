@@ -41,6 +41,14 @@ class OAuthRequestListener
             return;
         }
 
+        if (in_array("Contao Crawler", $requestHeaders['user-agent'])) {
+            return;
+        }
+
+        if (in_array("Escargot", $requestHeaders['user-agent'])) {
+            return;
+        }
+
         if (!str_starts_with($requestPath, "/oidc/login")) {
             if ($user === null || !$user->c4gOAuthMember) {
                 // no OAuth user given

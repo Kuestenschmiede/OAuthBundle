@@ -1,1 +1,6 @@
 # SSO Login configuration
+contao:
+  crawl:
+    default_http_client_options:
+      headers:
+        'X-Contao-Crawler-Secret': '%con4gis.oauth.oidc.crawler_secret%'

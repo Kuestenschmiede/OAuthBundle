@@ -137,7 +137,7 @@ class OidcAuthenticator extends OAuth2Authenticator implements AuthenticationEnt
      * Called when authentication is needed, but it's not sent.
      * This redirects to the 'login'.
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         return new RedirectResponse(
             '/oidc/login',

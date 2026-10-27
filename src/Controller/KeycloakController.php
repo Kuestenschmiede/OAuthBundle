@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
 
 class KeycloakController extends AbstractController
@@ -32,9 +32,8 @@ class KeycloakController extends AbstractController
     }
     /**
      * Link to this controller to start the "connect" process
-     *
-     * @Route("/oidc/login", name="connect_oidc_start")
      */
+    #[Route("/oidc/login", name: "connect_oidc_start")]
     public function connectAction()
     {
         // will redirect to sso!
@@ -47,9 +46,8 @@ class KeycloakController extends AbstractController
      * After going to SSO, you're redirected back here
      * because this is the "redirect_route" you configured
      * in config/packages/knpu_oauth2_client.yaml
-     *
-     * @Route("/oidc/callback", name="connect_oidc_check")
      */
+    #[Route("/oidc/callback", name: "connect_oidc_check")]
     public function connectCheckAction(Request $request) { }
 
 
@@ -57,6 +55,7 @@ class KeycloakController extends AbstractController
      *
      * @Route("/oidc/logout", name="oidc_logout")
      */
+    #[Route("/oidc/logout", name: "oidc_logout")]
     public function logoutAction(Request $request)
     {
         $baseAuthUrl = $this->provider->getBaseAuthorizationUrl();

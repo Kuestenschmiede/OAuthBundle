@@ -17,9 +17,6 @@ services:
     Contao\CoreBundle\Framework\FrameworkAwareInterface:
       calls:
         - [ "setFramework", [ "@contao.framework" ] ]
-    Symfony\Component\DependencyInjection\ContainerAwareInterface:
-      calls:
-        - [ "setContainer", [ "@service_container" ] ]
   con4gis\OAuthBundle\Controller\:
     resource: '../../Controller'
     tags: [ 'controller.service_arguments' ]

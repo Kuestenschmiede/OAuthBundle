@@ -23,13 +23,13 @@
   },
   "require": {
     "php": "^7.4 || ^8.0",
-    "contao/core-bundle": "^5.3",
+    "contao/core-bundle": "^5.7",
     "menatwork/contao-multicolumnwizard-bundle": "^3.6.11",
-    "doctrine/orm": "^2.8.1",
-    "doctrine/data-fixtures": "^1.4.4",
+    "doctrine/orm": "^3.7.5",
+    "doctrine/data-fixtures": "^2.2.1",
     "guzzlehttp/guzzle": "^6.5 || ^7.4",
     "knpuniversity/oauth2-client-bundle": "^2.16",
-    "stevenmaguire/oauth2-keycloak": "^2.0"
+    "stevenmaguire/oauth2-keycloak": "^6.1"
   },
   "conflict": {
     "contao/core": "*",
